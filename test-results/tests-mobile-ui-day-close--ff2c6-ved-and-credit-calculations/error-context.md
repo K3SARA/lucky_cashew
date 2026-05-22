@@ -1,0 +1,521 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: tests\mobile-ui.spec.js >> day close 80mm summary uses correct received and credit calculations
+- Location: tests\mobile-ui.spec.js:404:1
+
+# Error details
+
+```
+Test timeout of 30000ms exceeded.
+```
+
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - generic:
+    - generic:
+      - img "LynkBay Logo"
+      - heading "Cashew Billing" [level=1]
+      - paragraph: Powered by J&co.
+    - generic:
+      - heading "Welcome Setup" [level=2]
+      - generic:
+        - generic: Username
+        - generic:
+          - textbox "Enter username": dayclose-calc-1778613959081
+          - button "Clear input": x
+      - generic:
+        - generic: Password
+        - generic:
+          - textbox "Enter password": "1234"
+          - button "Clear input": x
+      - button "Continue"
+      - button "Forgot Password / Reset Login"
+  - generic:
+    - banner:
+      - heading "Logo Cashew Billing" [level=1]:
+        - img "Logo"
+        - text: Cashew Billing
+      - generic:
+        - button "Backup"
+        - button "Logout"
+    - generic:
+      - generic:
+        - generic:
+          - strong: Backup recommended
+          - generic: No backup created yet. Create one before using the app heavily.
+        - button "Backup Now"
+      - generic:
+        - generic:
+          - generic: Customer Name
+          - generic:
+            - textbox "Walk-in Customer"
+            - button "Clear input": x
+        - generic:
+          - generic: Phone Number (Optional)
+          - generic:
+            - textbox "07XXXXXXXX"
+        - generic:
+          - generic: Customer Address (Optional)
+          - generic:
+            - textbox "Enter address"
+      - generic:
+        - generic:
+          - generic:
+            - generic:
+              - generic: Item Name
+              - generic:
+                - textbox "Product Name"
+          - generic:
+            - generic:
+              - generic: Quantity
+              - generic:
+                - spinbutton: "1"
+                - button "Clear input": x
+            - generic:
+              - generic: Unit
+              - combobox:
+                - option "Pcs" [selected]
+                - option "Kg"
+                - option "g"
+                - option "Ltr"
+                - option "Pack"
+                - option "Box"
+          - generic:
+            - generic: Rate (price/unit)
+            - generic:
+              - spinbutton
+      - generic:
+        - button "+ Add Another Product"
+      - generic:
+        - generic:
+          - generic: Subtotal
+          - generic: LKR 0.00
+        - generic:
+          - generic: Total
+          - generic: LKR 0.00
+      - generic:
+        - generic:
+          - generic: Payment Method
+          - combobox:
+            - option "Cash" [selected]
+            - option "Card"
+            - option "Bank Transfer"
+            - option "Cheque"
+            - option "Credit"
+        - generic:
+          - generic: Received Amount
+          - generic:
+            - spinbutton
+            - button "Clear input": x
+        - button "+ Add Payment Method"
+        - generic:
+          - generic: Balance
+          - generic: LKR 0.00
+        - generic:
+          - generic: Change
+      - button "Generate & Share Bill"
+  - generic:
+    - banner:
+      - button "Logout"
+      - heading "Bill History" [level=1]
+    - generic:
+      - generic:
+        - generic:
+          - generic: Search Customer
+          - generic:
+            - textbox "Type customer name"
+        - generic:
+          - generic:
+            - generic: From
+            - generic:
+              - textbox
+          - generic:
+            - generic: To
+            - generic:
+              - textbox
+        - generic:
+          - button "Export Backup"
+          - button "Import Backup"
+          - button "Rollback Import"
+  - generic:
+    - banner:
+      - button "Logout"
+      - heading "Customers" [level=1]
+    - generic:
+      - generic:
+        - generic:
+          - generic: Search Customer
+          - generic:
+            - textbox "Type customer name"
+        - button "Add New Customer"
+  - generic:
+    - banner:
+      - button "Logout"
+      - heading "Collection" [level=1]
+    - generic:
+      - generic:
+        - generic:
+          - generic: Search Customer
+          - generic:
+            - textbox "Type customer name"
+      - generic:
+        - generic:
+          - generic:
+            - generic: Partial Cash Customer
+            - generic: Due LKR 500
+          - generic: "5/13/2026, 12:56:03 AM | Bill #3"
+          - generic:
+            - generic:
+              - generic: Total
+              - generic: "800"
+            - generic:
+              - generic: Received
+              - generic: "300"
+            - generic:
+              - generic: Balance
+              - generic: "500"
+          - generic:
+            - generic:
+              - generic: Collect Amount
+              - generic:
+                - spinbutton
+            - generic:
+              - generic: Method
+              - combobox:
+                - option "Cash" [selected]
+                - option "Card"
+                - option "Bank"
+                - option "Cheque"
+            - button "Collect"
+        - generic:
+          - generic:
+            - generic: Credit Customer
+            - generic: Due LKR 1,000
+          - generic: "5/13/2026, 12:56:01 AM | Bill #2"
+          - generic:
+            - generic:
+              - generic: Total
+              - generic: 1,500
+            - generic:
+              - generic: Received
+              - generic: "500"
+            - generic:
+              - generic: Balance
+              - generic: 1,000
+          - generic:
+            - generic:
+              - generic: Collect Amount
+              - generic:
+                - spinbutton
+            - generic:
+              - generic: Method
+              - combobox:
+                - option "Cash" [selected]
+                - option "Card"
+                - option "Bank"
+                - option "Cheque"
+            - button "Collect"
+      - generic:
+        - heading "Collection Audit Trail" [level=3]
+        - generic:
+          - generic:
+            - generic:
+              - strong: Credit Customer
+              - text: "• Bill #2"
+            - generic: 5/13/2026, 12:56:04 AM • collection • cash • LKR 500
+          - generic:
+            - generic:
+              - strong: Partial Cash Customer
+              - text: "• Bill #3"
+            - generic: 5/13/2026, 12:56:03 AM • invoice_payment • cash • LKR 300
+          - generic:
+            - generic:
+              - strong: Cash Customer
+              - text: "• Bill #1"
+            - generic: 5/13/2026, 12:56:00 AM • invoice_payment • cash • LKR 1,000
+  - generic:
+    - banner:
+      - button "Logout"
+      - heading "Expenses" [level=1]
+    - generic:
+      - generic:
+        - generic:
+          - generic: Expense Name
+          - generic:
+            - combobox "e.g. Transport, packing, salary"
+        - generic:
+          - generic: Amount
+          - generic:
+            - spinbutton
+        - generic:
+          - generic: Category
+          - combobox:
+            - option "Transport" [selected]
+            - option "Salary"
+            - option "Packing"
+            - option "Rent"
+            - option "Utility"
+            - option "Other"
+        - generic:
+          - generic: Date
+          - generic:
+            - textbox: 2026-05-12
+            - button "Clear input": x
+        - generic:
+          - generic: Note (Optional)
+          - generic:
+            - textbox "Short note"
+        - button "Add Expense"
+      - generic:
+        - generic:
+          - generic: Filter by Date
+          - button "Clear"
+        - generic:
+          - generic:
+            - generic: From
+            - generic:
+              - textbox
+          - generic:
+            - generic: To
+            - generic:
+              - textbox
+      - generic:
+        - heading "Recent Expenses" [level=3]
+        - generic:
+          - button "Print"
+          - generic: LKR 0
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - button "Logout" [ref=e5] [cursor=pointer]
+      - heading "Reports" [level=1] [ref=e6]
+    - generic [ref=e7]:
+      - generic [ref=e9]:
+        - generic [ref=e10]:
+          - generic [ref=e11]: Report
+          - combobox [ref=e12]:
+            - option "Sales Summary"
+            - option "Net Profit"
+            - option "Outstanding"
+            - option "Collections"
+            - option "Top Products"
+            - option "Stock Valuation"
+            - option "Payment Methods"
+            - option "Cheque Details"
+            - option "Expense Summary"
+            - option "Day Close" [selected]
+            - option "Low Stock"
+            - option "Audit Log"
+            - option "Customer Summary"
+            - option "Data Audit"
+        - generic [ref=e13]:
+          - generic [ref=e14]: Period
+          - combobox [ref=e15]:
+            - option "Today" [selected]
+            - option "This Month"
+            - option "All Time"
+            - option "Custom Range"
+      - generic [ref=e16]:
+        - generic [ref=e17]:
+          - generic [ref=e18]: Quick Notes
+          - textbox "Write short notes here..." [ref=e19]
+        - generic [ref=e20]:
+          - generic [ref=e21]: No saved note
+          - generic [ref=e22]:
+            - button "Clear" [ref=e23] [cursor=pointer]
+            - button "Save Note" [ref=e24] [cursor=pointer]
+      - generic [ref=e25]:
+        - generic [ref=e26]:
+          - heading "Day Close" [level=3] [ref=e27]
+          - button "Print 80mm" [ref=e28] [cursor=pointer]
+          - button "Download PDF" [ref=e29] [cursor=pointer]
+        - generic [ref=e30]:
+          - generic [ref=e31]:
+            - generic [ref=e32]: Invoices
+            - generic [ref=e33]: "3"
+          - generic [ref=e34]:
+            - generic [ref=e35]: Sales
+            - generic [ref=e36]: LKR 3,300
+          - generic [ref=e37]:
+            - generic [ref=e38]: Received
+            - generic [ref=e39]: LKR 1,800
+          - generic [ref=e40]:
+            - generic [ref=e41]: Expenses
+            - generic [ref=e42]: LKR 0
+          - generic [ref=e43]:
+            - generic [ref=e44]: Cash In Hand
+            - generic [ref=e45]: LKR 1,800
+          - generic [ref=e46]:
+            - generic [ref=e47]: Outstanding
+            - generic [ref=e48]: LKR 1,500
+  - generic:
+    - banner:
+      - button "Logout"
+      - heading "Inventory" [level=1]
+      - button "Edit"
+    - generic:
+      - generic:
+        - generic:
+          - generic: Select Existing Product
+          - combobox [disabled]:
+            - option "New product or choose existing" [selected]
+            - option "Cashew Packet"
+            - option "Day Close Cash Product"
+            - option "Day Close Credit Product"
+            - option "Day Close Partial Cash Product"
+        - generic:
+          - generic: Add New Product
+          - generic:
+            - textbox "Product Name" [disabled]
+        - generic:
+          - generic: Initial Stock (Qty)
+          - generic:
+            - spinbutton [disabled]
+        - generic:
+          - generic: Selling Price
+          - generic:
+            - spinbutton [disabled]
+        - generic:
+          - generic: Purchase Price
+          - generic:
+            - spinbutton [disabled]
+        - generic:
+          - generic: Reorder Level
+          - generic:
+            - spinbutton [disabled]
+        - generic:
+          - generic: Change Reason
+          - generic:
+            - textbox "Required when saving inventory changes" [disabled]
+      - generic:
+        - heading "Current Stock" [level=3]
+        - button "Download PDF"
+      - generic:
+        - generic:
+          - generic:
+            - generic:
+              - textbox [disabled]: Cashew Packet
+            - button "History"
+            - button "Delete" [disabled]
+          - generic:
+            - generic:
+              - generic: Stock
+              - generic:
+                - spinbutton [disabled]: "0"
+            - generic:
+              - generic: Selling Price
+              - generic:
+                - spinbutton [disabled]: "0"
+            - generic:
+              - generic: Purchase Price
+              - generic:
+                - spinbutton [disabled]: "0"
+            - generic:
+              - generic: Reorder Level
+              - generic:
+                - spinbutton [disabled]: "5"
+            - generic:
+              - generic: Out of Stock
+        - generic:
+          - generic:
+            - generic:
+              - textbox [disabled]: Day Close Cash Product
+            - button "History"
+            - button "Delete" [disabled]
+          - generic:
+            - generic:
+              - generic: Stock
+              - generic:
+                - spinbutton [disabled]: "99"
+            - generic:
+              - generic: Selling Price
+              - generic:
+                - spinbutton [disabled]: "1000"
+            - generic:
+              - generic: Purchase Price
+              - generic:
+                - spinbutton [disabled]: "0"
+            - generic:
+              - generic: Reorder Level
+              - generic:
+                - spinbutton [disabled]: "5"
+        - generic:
+          - generic:
+            - generic:
+              - textbox [disabled]: Day Close Credit Product
+            - button "History"
+            - button "Delete" [disabled]
+          - generic:
+            - generic:
+              - generic: Stock
+              - generic:
+                - spinbutton [disabled]: "99"
+            - generic:
+              - generic: Selling Price
+              - generic:
+                - spinbutton [disabled]: "1500"
+            - generic:
+              - generic: Purchase Price
+              - generic:
+                - spinbutton [disabled]: "0"
+            - generic:
+              - generic: Reorder Level
+              - generic:
+                - spinbutton [disabled]: "5"
+        - generic:
+          - generic:
+            - generic:
+              - textbox [disabled]: Day Close Partial Cash Product
+            - button "History"
+            - button "Delete" [disabled]
+          - generic:
+            - generic:
+              - generic: Stock
+              - generic:
+                - spinbutton [disabled]: "99"
+            - generic:
+              - generic: Selling Price
+              - generic:
+                - spinbutton [disabled]: "800"
+            - generic:
+              - generic: Purchase Price
+              - generic:
+                - spinbutton [disabled]: "0"
+            - generic:
+              - generic: Reorder Level
+              - generic:
+                - spinbutton [disabled]: "5"
+      - generic:
+        - heading "Archived Products" [level=3]
+      - generic:
+        - generic: No archived products.
+  - navigation [ref=e49]:
+    - button "🧾 Billing" [ref=e50] [cursor=pointer]:
+      - generic [ref=e51]: 🧾
+      - generic [ref=e52]: Billing
+    - button "📦 Inventory" [ref=e53] [cursor=pointer]:
+      - generic [ref=e54]: 📦
+      - generic [ref=e55]: Inventory
+    - button "👥 Customers" [ref=e56] [cursor=pointer]:
+      - generic [ref=e57]: 👥
+      - generic [ref=e58]: Customers
+    - button "💰 Collection" [ref=e59] [cursor=pointer]:
+      - generic [ref=e60]: 💰
+      - generic [ref=e61]: Collection
+    - button "💸 Expenses" [ref=e62] [cursor=pointer]:
+      - generic [ref=e63]: 💸
+      - generic [ref=e64]: Expenses
+    - button "📈 Reports" [ref=e65] [cursor=pointer]:
+      - generic [ref=e66]: 📈
+      - generic [ref=e67]: Reports
+    - button "📜 History" [ref=e68] [cursor=pointer]:
+      - generic [ref=e69]: 📜
+      - generic [ref=e70]: History
+```

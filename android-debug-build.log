@@ -1,0 +1,131 @@
+
+D:\Projects\T Billing App\android>if "Windows_NT" == "Windows_NT" setlocal
+
+D:\Projects\T Billing App\android>set DIRNAME=D:\Projects\T Billing App\android\ 
+
+D:\Projects\T Billing App\android>if "D:\Projects\T Billing App\android\" == "" set DIRNAME=. 
+
+D:\Projects\T Billing App\android>set APP_BASE_NAME=gradlew 
+
+D:\Projects\T Billing App\android>set APP_HOME=D:\Projects\T Billing App\android\ 
+
+D:\Projects\T Billing App\android>for %i in ("D:\Projects\T Billing App\android\") do set APP_HOME=%~fi 
+
+D:\Projects\T Billing App\android>set APP_HOME=D:\Projects\T Billing App\android\ 
+
+D:\Projects\T Billing App\android>set DEFAULT_JVM_OPTS="-Xmx64m" "-Xms64m" 
+
+D:\Projects\T Billing App\android>if defined JAVA_HOME goto findJavaFromJavaHome 
+
+D:\Projects\T Billing App\android>set JAVA_HOME=C:\Program Files\Android\Android Studio\jbr 
+
+D:\Projects\T Billing App\android>set JAVA_EXE=C:\Program Files\Android\Android Studio\jbr/bin/java.exe 
+
+D:\Projects\T Billing App\android>if exist "C:\Program Files\Android\Android Studio\jbr/bin/java.exe" goto execute 
+
+D:\Projects\T Billing App\android>set CLASSPATH=D:\Projects\T Billing App\android\\gradle\wrapper\gradle-wrapper.jar 
+
+D:\Projects\T Billing App\android>"C:\Program Files\Android\Android Studio\jbr/bin/java.exe" "-Xmx64m" "-Xms64m"   "-Dorg.gradle.appname=gradlew" -classpath "D:\Projects\T Billing App\android\\gradle\wrapper\gradle-wrapper.jar" org.gradle.wrapper.GradleWrapperMain clean assembleDebug --console=plain --stacktrace --no-daemon 
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.2.1/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+
+> Configure project :app
+WARNING: Using flatDir should be avoided because it doesn't support any meta-data formats.
+
+> Configure project :capacitor-cordova-android-plugins
+WARNING: Using flatDir should be avoided because it doesn't support any meta-data formats.
+Warning: SDK processing. This version only understands SDK XML versions up to 3 but an SDK XML file of version 4 was encountered. This can happen if you use versions of Android Studio and the command-line tools that were released at different times.
+
+> Task :clean UP-TO-DATE
+> Task :app:clean
+> Task :capacitor-android:clean
+> Task :capacitor-cordova-android-plugins:clean
+> Task :app:preBuild UP-TO-DATE
+> Task :app:preDebugBuild UP-TO-DATE
+> Task :app:mergeDebugNativeDebugMetadata NO-SOURCE
+> Task :capacitor-android:preBuild UP-TO-DATE
+> Task :capacitor-android:preDebugBuild UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:preBuild UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:preDebugBuild UP-TO-DATE
+> Task :app:javaPreCompileDebug
+> Task :capacitor-android:writeDebugAarMetadata
+> Task :app:generateDebugResValues
+> Task :capacitor-cordova-android-plugins:writeDebugAarMetadata
+> Task :capacitor-android:generateDebugResValues
+> Task :capacitor-android:generateDebugResources
+> Task :app:checkDebugAarMetadata
+> Task :capacitor-android:packageDebugResources
+> Task :capacitor-cordova-android-plugins:generateDebugResValues
+> Task :capacitor-cordova-android-plugins:generateDebugResources
+> Task :capacitor-cordova-android-plugins:packageDebugResources
+> Task :app:mapDebugSourceSetPaths
+> Task :app:generateDebugResources
+> Task :app:packageDebugResources
+> Task :app:parseDebugLocalResources
+> Task :app:createDebugCompatibleScreenManifests
+> Task :app:extractDeepLinksDebug
+> Task :capacitor-android:extractDeepLinksDebug
+> Task :app:mergeDebugResources
+> Task :capacitor-cordova-android-plugins:extractDeepLinksDebug
+> Task :capacitor-android:compileDebugLibraryResources
+> Task :capacitor-cordova-android-plugins:compileDebugLibraryResources
+> Task :capacitor-android:processDebugManifest
+> Task :capacitor-cordova-android-plugins:processDebugManifest
+> Task :capacitor-cordova-android-plugins:parseDebugLocalResources
+> Task :capacitor-android:javaPreCompileDebug
+> Task :capacitor-cordova-android-plugins:javaPreCompileDebug
+> Task :capacitor-android:parseDebugLocalResources
+> Task :app:processDebugMainManifest
+> Task :app:processDebugManifest
+> Task :app:processDebugManifestForPackage
+> Task :app:mergeDebugShaders
+> Task :app:compileDebugShaders NO-SOURCE
+> Task :app:generateDebugAssets UP-TO-DATE
+> Task :capacitor-android:mergeDebugShaders
+> Task :capacitor-android:compileDebugShaders NO-SOURCE
+> Task :capacitor-android:generateDebugAssets UP-TO-DATE
+> Task :capacitor-android:generateDebugRFile
+> Task :capacitor-cordova-android-plugins:generateDebugRFile
+> Task :capacitor-android:packageDebugAssets
+> Task :app:processDebugResources
+
+> Task :capacitor-android:compileDebugJavaWithJavac
+Note: Some input files use unchecked or unsafe operations.
+Note: Recompile with -Xlint:unchecked for details.
+
+> Task :capacitor-cordova-android-plugins:compileDebugJavaWithJavac NO-SOURCE
+> Task :capacitor-cordova-android-plugins:bundleLibCompileToJarDebug
+> Task :capacitor-cordova-android-plugins:mergeDebugShaders
+> Task :capacitor-cordova-android-plugins:compileDebugShaders NO-SOURCE
+> Task :capacitor-cordova-android-plugins:generateDebugAssets UP-TO-DATE
+> Task :capacitor-cordova-android-plugins:packageDebugAssets
+> Task :capacitor-android:bundleLibCompileToJarDebug
+> Task :app:mergeDebugAssets
+> Task :app:compileDebugJavaWithJavac
+> Task :capacitor-cordova-android-plugins:bundleLibRuntimeToJarDebug
+> Task :capacitor-android:bundleLibRuntimeToJarDebug
+> Task :app:compressDebugAssets
+> Task :app:desugarDebugFileDependencies
+> Task :app:dexBuilderDebug
+> Task :app:processDebugJavaRes NO-SOURCE
+> Task :capacitor-android:processDebugJavaRes NO-SOURCE
+> Task :capacitor-cordova-android-plugins:processDebugJavaRes NO-SOURCE
+> Task :app:mergeDebugJniLibFolders
+> Task :app:checkDebugDuplicateClasses
+> Task :capacitor-android:mergeDebugJniLibFolders
+> Task :capacitor-android:mergeDebugNativeLibs NO-SOURCE
+> Task :capacitor-android:copyDebugJniLibsProjectOnly
+> Task :capacitor-cordova-android-plugins:mergeDebugJniLibFolders
+> Task :capacitor-cordova-android-plugins:mergeDebugNativeLibs NO-SOURCE
+> Task :capacitor-cordova-android-plugins:copyDebugJniLibsProjectOnly
+> Task :app:mergeDebugNativeLibs NO-SOURCE
+> Task :app:stripDebugDebugSymbols NO-SOURCE
+> Task :app:validateSigningDebug
+> Task :app:writeDebugAppMetadata
+> Task :app:writeDebugSigningConfigVersions
+> Task :capacitor-android:stripDebugDebugSymbols NO-SOURCE
+> Task :capacitor-android:copyDebugJniLibsProjectAndLocalJars
+> Task :app:mergeProjectDexDebug
+> Task :app:mergeDebugJavaResource
+> Task :app:mergeExtDexDebug
+> Task :capacitor-android:extractDebugAnnotations
