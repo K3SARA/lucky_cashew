@@ -2,6 +2,8 @@ class App {
   constructor() {
     this.currentPage = 'login';
     this.isReady = false;
+    this.theme = localStorage.getItem('lynkbay_theme') || 'light';
+    this.applyTheme(this.theme);
   }
 
   async init() {
@@ -29,6 +31,8 @@ class App {
     if (window.expensesPage) window.expensesPage.init();
     if (window.clearInputs) window.clearInputs.init();
     this.bindBackupButtons();
+    this.bindThemeToggle();
+    this.updateThemeToggle();
     this.updateBackupReminder();
     this.isReady = true;
     if (window.auth && typeof window.auth.setReadyState === 'function') {
@@ -42,6 +46,42 @@ class App {
     if (!window.auth?.isAuthenticated) {
       this.navigate('login');
     }
+  }
+
+  applyTheme(theme) {
+    const nextTheme = theme === 'dark' ? 'dark' : 'light';
+    this.theme = nextTheme;
+    document.documentElement.setAttribute('data-theme', nextTheme);
+    const themeColor = document.querySelector('meta[name="theme-color"]');
+    if (themeColor) themeColor.setAttribute('content', nextTheme === 'dark' ? '#0f1411' : '#ffffff');
+  }
+
+  setTheme(theme) {
+    this.applyTheme(theme);
+    localStorage.setItem('lynkbay_theme', this.theme);
+    this.updateThemeToggle();
+  }
+
+  toggleTheme() {
+    this.setTheme(this.theme === 'dark' ? 'light' : 'dark');
+  }
+
+  bindThemeToggle() {
+    const toggle = document.getElementById('theme-toggle');
+    if (!toggle || toggle.dataset.themeBound === '1') return;
+    toggle.dataset.themeBound = '1';
+    toggle.addEventListener('click', () => this.toggleTheme());
+  }
+
+  updateThemeToggle() {
+    const toggle = document.getElementById('theme-toggle');
+    if (!toggle) return;
+    const isDark = this.theme === 'dark';
+    toggle.setAttribute('aria-label', isDark ? 'Switch to light mode' : 'Switch to dark mode');
+    const icon = toggle.querySelector('.theme-toggle-icon');
+    const text = toggle.querySelector('.theme-toggle-text');
+    if (icon) icon.textContent = isDark ? '☀' : '☾';
+    if (text) text.textContent = isDark ? 'Light Mode' : 'Dark Mode';
   }
 
   restoreReceiptNavigation() {

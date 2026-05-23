@@ -182,22 +182,32 @@ class Database {
   }
 
   async updateProduct(id, updates) {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       const tx = this.db.transaction('products', 'readwrite');
       const store = tx.objectStore('products');
       const req = store.get(id);
       req.onsuccess = (e) => {
-        let product = e.target.result;
-        if (product) {
-          if ('stock' in product) product.stock = Math.max(0, parseFloat(product.stock) || 0);
-          if (updates && 'stock' in updates) {
-            updates.stock = Math.max(0, parseFloat(updates.stock) || 0);
+        try {
+          if (!updates || typeof updates !== 'object' || Array.isArray(updates)) {
+            throw new Error('Invalid product update payload.');
           }
-          product = { ...product, ...updates, updated_at: new Date().getTime() };
-          store.put(product);
+          let product = e.target.result;
+          if (product) {
+            if ('stock' in product) product.stock = Math.max(0, parseFloat(product.stock) || 0);
+            if ('stock' in updates) {
+              updates.stock = Math.max(0, parseFloat(updates.stock) || 0);
+            }
+            product = { ...product, ...updates, updated_at: new Date().getTime() };
+            store.put(product);
+          }
+          resolve(product || null);
+        } catch (err) {
+          tx.abort();
+          reject(err);
         }
-        resolve(product || null);
       };
+      req.onerror = () => reject(req.error || new Error('Failed to read product.'));
+      tx.onerror = () => reject(tx.error || new Error('Failed to update product.'));
     });
   }
 
@@ -781,20 +791,30 @@ class Database {
   }
 
   async updateBill(id, updates) {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       const tx = this.db.transaction('bills', 'readwrite');
       const store = tx.objectStore('bills');
       const req = store.get(id);
       req.onsuccess = (e) => {
-        const bill = e.target.result;
-        if (!bill) {
-          resolve(null);
-          return;
+        try {
+          if (!updates || typeof updates !== 'object' || Array.isArray(updates)) {
+            throw new Error('Invalid bill update payload.');
+          }
+          const bill = e.target.result;
+          if (!bill) {
+            resolve(null);
+            return;
+          }
+          const next = { ...bill, ...updates, updated_at: new Date().getTime() };
+          store.put(next);
+          resolve(next);
+        } catch (err) {
+          tx.abort();
+          reject(err);
         }
-        const next = { ...bill, ...updates, updated_at: new Date().getTime() };
-        store.put(next);
-        resolve(next);
       };
+      req.onerror = () => reject(req.error || new Error('Failed to read bill.'));
+      tx.onerror = () => reject(tx.error || new Error('Failed to update bill.'));
     });
   }
 

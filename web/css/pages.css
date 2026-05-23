@@ -1527,7 +1527,17 @@
     width: 100%;
     max-width: 1180px;
     margin: 0 auto;
-    padding: 0 4px 32px !important;
+    padding: 0 4px 110px !important;
+  }
+
+  .inventory-floating-save {
+    left: calc(240px + (100vw - 240px) / 2);
+    right: auto;
+    bottom: 24px;
+    width: min(1120px, calc(100vw - 240px - 56px));
+    transform: translateX(-50%);
+    padding: 13px 18px;
+    border-radius: 14px;
   }
 
   .inventory-stock-title-row,
@@ -1655,6 +1665,663 @@
   #inventory-archived-list,
   #expenses-list {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 900px) {
+  :root {
+    --desktop-bg: #f7f8f5;
+    --desktop-surface: #ffffff;
+    --desktop-surface-soft: #f3f5f1;
+    --desktop-border: rgba(17, 24, 20, 0.1);
+    --desktop-border-strong: rgba(17, 24, 20, 0.16);
+    --desktop-text: #121511;
+    --desktop-muted: #687067;
+    --desktop-accent: #0f5132;
+    --desktop-accent-soft: rgba(15, 81, 50, 0.1);
+    --desktop-danger: #b42318;
+    --desktop-shadow: 0 18px 48px rgba(17, 24, 20, 0.08);
+    --desktop-shadow-soft: 0 10px 28px rgba(17, 24, 20, 0.05);
+  }
+
+  body,
+  #app,
+  .page {
+    background:
+      radial-gradient(circle at top right, rgba(15, 81, 50, 0.08), transparent 34%),
+      linear-gradient(135deg, #fbfcfa 0%, var(--desktop-bg) 48%, #eef2ec 100%);
+    color: var(--desktop-text);
+  }
+
+  .page {
+    padding-left: 264px;
+  }
+
+  #login-page {
+    padding-left: var(--spacing-6);
+  }
+
+  .top-header {
+    position: sticky;
+    top: 0;
+    min-height: 84px;
+    padding: 22px 34px;
+    border-bottom: 1px solid var(--desktop-border);
+    background: rgba(255, 255, 255, 0.84);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.7) inset;
+  }
+
+  .top-header h1 {
+    color: var(--desktop-text);
+    font-size: 1.42rem;
+    font-weight: 760;
+    letter-spacing: 0;
+  }
+
+  .top-header h1::after {
+    content: "";
+    display: block;
+    width: 46px;
+    height: 3px;
+    margin-left: 2px;
+    border-radius: 999px;
+    background: var(--desktop-accent);
+  }
+
+  .top-header .logo {
+    width: 34px;
+    height: 34px;
+    object-fit: cover;
+    border-radius: 9px;
+    box-shadow: 0 8px 18px rgba(17, 24, 20, 0.14);
+  }
+
+  .header-actions {
+    gap: 10px;
+  }
+
+  .header-tool-btn,
+  .btn-tool,
+  .inventory-header-edit,
+  .expense-filter-clear {
+    min-height: 40px;
+    border: 1px solid var(--desktop-border-strong);
+    border-radius: 10px;
+    background: #fff;
+    color: var(--desktop-text);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.9) inset;
+    font-weight: 760;
+    transition: transform var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
+  }
+
+  .header-tool-btn:hover,
+  .btn-tool:hover,
+  .inventory-header-edit:hover,
+  .expense-filter-clear:hover {
+    border-color: rgba(15, 81, 50, 0.34);
+    box-shadow: 0 10px 24px rgba(17, 24, 20, 0.08);
+    transform: translateY(-1px);
+  }
+
+  .logout-btn {
+    min-height: 40px;
+    border-radius: 10px;
+    padding: 0 16px;
+    background: #141814;
+    box-shadow: 0 12px 24px rgba(17, 24, 20, 0.18);
+    color: #fff;
+  }
+
+  .logout-btn:hover {
+    background: #0f5132;
+  }
+
+  .card,
+  .summary-card,
+  .history-filters,
+  .reports-controls,
+  .reports-view,
+  .expense-card {
+    border: 1px solid var(--desktop-border);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: var(--desktop-shadow-soft);
+  }
+
+  .card {
+    padding: 24px;
+  }
+
+  .input-group label,
+  .item-name-row label,
+  .item-field-block label {
+    color: var(--desktop-muted);
+    font-size: 0.76rem;
+    font-weight: 800;
+    letter-spacing: 0;
+    text-transform: uppercase;
+  }
+
+  .input-field,
+  .cheque-status-select {
+    min-height: 46px;
+    border: 1px solid var(--desktop-border);
+    border-radius: 10px;
+    background: #fbfcfa;
+    color: var(--desktop-text);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.8) inset;
+  }
+
+  .input-field:hover,
+  .cheque-status-select:hover {
+    border-color: var(--desktop-border-strong);
+  }
+
+  .input-field:focus,
+  .cheque-status-select:focus {
+    border-color: var(--desktop-accent);
+    box-shadow: 0 0 0 4px var(--desktop-accent-soft);
+  }
+
+  .btn-primary {
+    width: calc(100% - 48px);
+    max-width: 1120px;
+    min-height: 52px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #121511, #0f5132);
+    color: #fff;
+    font-size: 0.98rem;
+    font-weight: 820;
+    box-shadow: 0 18px 34px rgba(15, 81, 50, 0.24);
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 22px 42px rgba(15, 81, 50, 0.28);
+  }
+
+  .btn-secondary {
+    border-radius: 12px;
+    background: #fff;
+    color: var(--desktop-muted);
+  }
+
+  .nav-bottom {
+    left: 18px;
+    top: 18px;
+    bottom: 18px;
+    width: 228px;
+    padding: 18px 14px;
+    border: 1px solid rgba(255, 255, 255, 0.62);
+    border-radius: 18px;
+    background: rgba(18, 21, 17, 0.94);
+    box-shadow: 0 24px 70px rgba(17, 24, 20, 0.28);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+  }
+
+  .nav-bottom::before {
+    content: "LynkBay";
+    display: block;
+    padding: 10px 12px 18px;
+    color: #fff;
+    font-size: 1.25rem;
+    font-weight: 840;
+    letter-spacing: 0;
+  }
+
+  .nav-bottom::after {
+    content: "Cashew Dealers";
+    position: absolute;
+    left: 26px;
+    right: 26px;
+    bottom: 82px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.14);
+    color: rgba(255, 255, 255, 0.52);
+    font-size: 0.76rem;
+    font-weight: 700;
+  }
+
+  .nav-item {
+    height: 48px;
+    margin-bottom: 7px;
+    padding: 0 12px;
+    border-radius: 11px;
+    color: rgba(255, 255, 255, 0.68);
+    font-size: 0.92rem;
+    font-weight: 720;
+  }
+
+  .nav-item:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .nav-item.active {
+    color: #fff;
+    background: linear-gradient(135deg, rgba(15, 81, 50, 0.95), rgba(29, 98, 65, 0.95));
+    box-shadow: 0 14px 26px rgba(0, 0, 0, 0.24);
+  }
+
+  .nav-icon {
+    width: 26px;
+    font-size: 1.08rem;
+  }
+
+  .theme-toggle {
+    position: absolute;
+    left: 24px;
+    right: 24px;
+    bottom: 22px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.86);
+    font-size: 0.84rem;
+    font-weight: 820;
+    transition: background var(--transition-fast), transform var(--transition-fast), border-color var(--transition-fast);
+  }
+
+  .theme-toggle:hover {
+    transform: translateY(-1px);
+    border-color: rgba(255, 255, 255, 0.24);
+    background: rgba(255, 255, 255, 0.12);
+  }
+
+  .theme-toggle-icon {
+    width: 26px;
+    height: 26px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+    font-size: 0.92rem;
+  }
+
+  #billing-page > div,
+  #history-page > div,
+  #customers-page > div,
+  #collection-page > div,
+  .inventory-scroll,
+  .expenses-scroll {
+    max-width: 1240px;
+    padding: 24px 28px 48px !important;
+  }
+
+  #billing-page > div {
+    display: grid;
+    grid-template-columns: minmax(0, 1.18fr) minmax(360px, 0.82fr);
+    align-content: start;
+    gap: 18px;
+  }
+
+  #billing-page > div > .card,
+  #billing-page > div > .summary-card,
+  #billing-page > div > #bill-items-container,
+  #billing-page > div > div[style*="text-align: center"] {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+  }
+
+  #billing-page > div > .card:first-of-type,
+  #bill-items-container,
+  #billing-page > div > div[style*="text-align: center"] {
+    grid-column: 1;
+  }
+
+  #billing-page > div > .summary-card,
+  #billing-page > div > .card:last-of-type,
+  #btn-generate-bill,
+  #btn-cancel-edit {
+    grid-column: 2;
+  }
+
+  #backup-reminder {
+    grid-column: 1 / -1;
+  }
+
+  #bill-items-container {
+    display: grid;
+    gap: 14px;
+  }
+
+  .bill-item {
+    margin: 0;
+    padding: 22px;
+  }
+
+  .item-controls-grid {
+    grid-template-columns: 0.75fr 0.8fr 1fr;
+  }
+
+  .summary-card {
+    padding: 24px;
+  }
+
+  .summary-row {
+    color: var(--desktop-muted);
+  }
+
+  .summary-row.total {
+    color: var(--desktop-text);
+    border-top-color: var(--desktop-border);
+    font-weight: 840;
+  }
+
+  .split-payments,
+  .split-payment-row {
+    border-color: var(--desktop-border);
+    background: var(--desktop-surface-soft);
+  }
+
+  .history-sale-card {
+    border: 1px solid var(--desktop-border);
+    border-radius: 12px;
+    background: linear-gradient(135deg, #ffffff 0%, #f8faf7 100%);
+    box-shadow: var(--desktop-shadow-soft);
+  }
+
+  .history-sale-card:hover,
+  .expense-card:hover,
+  #inventory-list .card:hover,
+  #inventory-archived-list .card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--desktop-shadow);
+  }
+
+  .history-sale-top .history-customer,
+  .history-sale-value,
+  .expense-name,
+  .report-metric-value {
+    color: var(--desktop-text);
+    font-weight: 820;
+  }
+
+  .history-sale-date,
+  .history-sale-label,
+  .history-date,
+  .expense-meta,
+  .report-metric-label {
+    color: var(--desktop-muted);
+  }
+
+  .history-pdf-btn,
+  .history-delete-btn,
+  .history-menu-btn,
+  .history-icon-btn,
+  .customers-edit-btn,
+  .customers-delete-btn,
+  .customers-map-btn,
+  .inventory-delete-btn,
+  .inventory-history-btn {
+    border-radius: 9px;
+  }
+
+  .customers-table-wrap,
+  .report-table-wrap {
+    border: 1px solid var(--desktop-border);
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: var(--desktop-shadow-soft);
+  }
+
+  .customers-table th,
+  .report-table th {
+    background: #f5f7f3;
+    color: var(--desktop-muted);
+    font-size: 0.72rem;
+    font-weight: 840;
+    letter-spacing: 0;
+  }
+
+  .customers-table td,
+  .report-table td {
+    border-bottom-color: rgba(17, 24, 20, 0.07);
+    color: var(--desktop-text);
+  }
+
+  .customer-outstanding,
+  .collection-badge,
+  .expenses-total-badge {
+    border-radius: 999px;
+    background: var(--desktop-accent-soft);
+    color: var(--desktop-accent);
+    font-weight: 840;
+  }
+
+  .inventory-scroll {
+    max-width: 1240px;
+    padding-bottom: 128px !important;
+  }
+
+  .inventory-scroll > .card:first-child {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .inventory-scroll > .card:first-child .input-group {
+    margin-bottom: 0 !important;
+  }
+
+  .inventory-scroll > .card:first-child .input-group:first-child,
+  .inventory-scroll > .card:first-child .input-group:last-child {
+    grid-column: 1 / -1;
+  }
+
+  .inventory-stock-title-row,
+  .expenses-title-row {
+    width: 100%;
+    max-width: none;
+    margin: 24px 0 12px;
+    padding: 0 2px;
+  }
+
+  .inventory-stock-title-row h3,
+  .expenses-title-row h3 {
+    color: var(--desktop-text);
+    font-size: 0.92rem;
+    letter-spacing: 0;
+  }
+
+  #inventory-list,
+  #inventory-archived-list,
+  #expenses-list {
+    width: 100%;
+    max-width: none;
+    gap: 16px;
+  }
+
+  #inventory-list .card,
+  #inventory-archived-list .card {
+    background: #fff;
+  }
+
+  .inventory-product-header {
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    gap: 10px;
+  }
+
+  .inventory-name-input {
+    background: transparent;
+    border-color: transparent;
+    padding-left: 0;
+    font-size: 1.08rem;
+    font-weight: 840;
+  }
+
+  .inventory-history-btn,
+  .inventory-delete-btn {
+    min-height: 38px;
+    padding: 9px 12px;
+    border: 1px solid var(--desktop-border);
+    background: #fff;
+    color: var(--desktop-text);
+    font-size: 0.78rem;
+    font-weight: 820;
+  }
+
+  .inventory-delete-btn {
+    border-color: rgba(180, 35, 24, 0.18);
+    background: rgba(180, 35, 24, 0.06);
+    color: var(--desktop-danger);
+  }
+
+  .inventory-floating-save {
+    left: calc(264px + (100vw - 264px) / 2);
+    width: min(1160px, calc(100vw - 264px - 64px));
+    border-radius: 12px;
+    background: linear-gradient(135deg, #121511, #0f5132);
+  }
+
+  .expenses-filter-card,
+  .history-filters {
+    padding: 20px;
+  }
+
+  .reports-shell {
+    max-width: 1240px;
+    padding: 24px 28px 48px !important;
+    grid-template-columns: 360px minmax(0, 1fr);
+    gap: 18px;
+  }
+
+  .reports-shell > .reports-controls {
+    margin: 0;
+  }
+
+  .reports-view {
+    margin: 0;
+    min-height: calc(100dvh - 140px);
+  }
+
+  .report-metric {
+    border-color: var(--desktop-border);
+    background: #f8faf7;
+    padding: 14px;
+  }
+
+  .modal-content,
+  .customer-map-modal-content {
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    background: #fff;
+    box-shadow: 0 28px 80px rgba(17, 24, 20, 0.26);
+  }
+
+  html[data-theme="dark"] {
+    --desktop-bg: #0f1411;
+    --desktop-surface: #171d19;
+    --desktop-surface-soft: #111713;
+    --desktop-border: rgba(255, 255, 255, 0.1);
+    --desktop-border-strong: rgba(255, 255, 255, 0.18);
+    --desktop-text: #f4f7f2;
+    --desktop-muted: #a2aa9f;
+    --desktop-accent: #7fd39d;
+    --desktop-accent-soft: rgba(127, 211, 157, 0.13);
+    --desktop-shadow: 0 20px 56px rgba(0, 0, 0, 0.34);
+    --desktop-shadow-soft: 0 12px 34px rgba(0, 0, 0, 0.24);
+    --bg-color: #0f1411;
+    --card-bg: #171d19;
+    --text-main: #f4f7f2;
+    --text-muted: #a2aa9f;
+    --accent-color: #7fd39d;
+    --accent-color-rgb: 127, 211, 157;
+  }
+
+  html[data-theme="dark"] body,
+  html[data-theme="dark"] #app,
+  html[data-theme="dark"] .page {
+    background:
+      radial-gradient(circle at top right, rgba(127, 211, 157, 0.14), transparent 34%),
+      linear-gradient(135deg, #101511 0%, #0f1411 52%, #070a08 100%);
+  }
+
+  html[data-theme="dark"] .top-header {
+    border-bottom-color: var(--desktop-border);
+    background: rgba(15, 20, 17, 0.82);
+  }
+
+  html[data-theme="dark"] .card,
+  html[data-theme="dark"] .summary-card,
+  html[data-theme="dark"] .history-filters,
+  html[data-theme="dark"] .reports-controls,
+  html[data-theme="dark"] .reports-view,
+  html[data-theme="dark"] .expense-card,
+  html[data-theme="dark"] .customers-table-wrap,
+  html[data-theme="dark"] .report-table-wrap,
+  html[data-theme="dark"] .modal-content,
+  html[data-theme="dark"] .customer-map-modal-content {
+    background: rgba(23, 29, 25, 0.92);
+    border-color: var(--desktop-border);
+    box-shadow: var(--desktop-shadow-soft);
+  }
+
+  html[data-theme="dark"] .input-field,
+  html[data-theme="dark"] .cheque-status-select,
+  html[data-theme="dark"] .header-tool-btn,
+  html[data-theme="dark"] .btn-tool,
+  html[data-theme="dark"] .inventory-header-edit,
+  html[data-theme="dark"] .expense-filter-clear,
+  html[data-theme="dark"] .btn-secondary,
+  html[data-theme="dark"] .inventory-history-btn {
+    background: #111713;
+    border-color: var(--desktop-border);
+    color: var(--desktop-text);
+  }
+
+  html[data-theme="dark"] .input-field::placeholder {
+    color: rgba(244, 247, 242, 0.42);
+  }
+
+  html[data-theme="dark"] .logout-btn,
+  html[data-theme="dark"] .btn-primary,
+  html[data-theme="dark"] .inventory-floating-save {
+    background: linear-gradient(135deg, #263229, #0f5132);
+    box-shadow: 0 18px 42px rgba(0, 0, 0, 0.34);
+  }
+
+  html[data-theme="dark"] .nav-bottom {
+    background: rgba(8, 11, 9, 0.95);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+
+  html[data-theme="dark"] .nav-item.active {
+    background: linear-gradient(135deg, rgba(20, 104, 62, 0.95), rgba(32, 127, 78, 0.95));
+  }
+
+  html[data-theme="dark"] .summary-row.total,
+  html[data-theme="dark"] .report-table th,
+  html[data-theme="dark"] .customers-table th {
+    border-color: var(--desktop-border);
+  }
+
+  html[data-theme="dark"] .report-table th,
+  html[data-theme="dark"] .customers-table th,
+  html[data-theme="dark"] .report-metric,
+  html[data-theme="dark"] .split-payments,
+  html[data-theme="dark"] .split-payment-row {
+    background: #111713;
+    border-color: var(--desktop-border);
+  }
+
+  html[data-theme="dark"] .dropdown-item,
+  html[data-theme="dark"] .customer-dropdown {
+    background: #171d19;
+    color: var(--desktop-text);
+    border-color: var(--desktop-border);
+  }
+
+  html[data-theme="dark"] .inventory-name-input {
+    background: transparent;
   }
 }
 
