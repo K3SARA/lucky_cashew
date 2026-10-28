@@ -1,0 +1,5 @@
+node_modules/
+data/lynkbay-api-secret.txt
+data/*.tmp
+.env
+.DS_Store

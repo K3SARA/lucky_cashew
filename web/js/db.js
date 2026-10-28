@@ -1281,7 +1281,7 @@ class Database {
     await this.recalculateBillCounter();
     if (customers.length === 0 && bills.length > 0) {
       await this.syncCustomersFromBills();
-    } else {
+    } else if (typeof localStorage !== 'undefined') {
       localStorage.setItem('customers_synced_v1', '1');
     }
   }
