@@ -1,14 +1,65 @@
 {
   "app": "LynkBay Cashew Billing",
-  "exportedAt": "2026-10-28T10:46:00.072Z",
+  "exportedAt": "2026-10-28T11:47:15.056Z",
   "schemaVersion": 9,
   "data": {
-    "products": [],
+    "products": [
+      {
+        "name": "Cashew Packet",
+        "stock": 10,
+        "billingPrice": 0,
+        "invoicePrice": 0,
+        "reorderLevel": 5,
+        "inactive": false,
+        "created_at": 1793178116795,
+        "updated_at": 1793180172858,
+        "id": 1
+      }
+    ],
     "customers": [],
     "bills": [],
     "collectionLogs": [],
-    "inventoryLogs": [],
+    "inventoryLogs": [
+      {
+        "productId": 1,
+        "productName": "Cashew Packet",
+        "action": "manual_adjustment",
+        "reason": "none",
+        "before": {
+          "name": "Cashew Packet",
+          "stock": 0,
+          "billingPrice": 0,
+          "invoicePrice": 0,
+          "reorderLevel": 5
+        },
+        "after": {
+          "id": 1,
+          "name": "Cashew Packet",
+          "stock": 10,
+          "billingPrice": 0,
+          "invoicePrice": 0,
+          "reorderLevel": 5
+        },
+        "addedQty": 10,
+        "billingPrice": 0,
+        "invoicePrice": 0,
+        "timestamp": 1793180172871,
+        "id": 1
+      }
+    ],
     "expenses": [],
-    "auditLogs": []
+    "auditLogs": [
+      {
+        "action": "inventory_save",
+        "entity": "inventory",
+        "entityId": null,
+        "details": {
+          "updatedProducts": 1,
+          "reason": "none"
+        },
+        "timestamp": 1793180172888,
+        "id": 1
+      }
+    ]
   }
 }

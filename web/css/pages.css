@@ -1933,16 +1933,27 @@
   }
 
   .logout-btn {
+    width: auto;
     min-height: 40px;
     border-radius: 10px;
     padding: 0 16px;
     background: #141814;
     box-shadow: 0 12px 24px rgba(17, 24, 20, 0.18);
     color: #fff;
+    gap: 8px;
   }
 
   .logout-btn:hover {
-    background: #0f5132;
+    background: #d70015;
+  }
+
+  .logout-btn .logout-text {
+    display: inline;
+  }
+
+  .logout-btn .logout-icon {
+    width: 16px;
+    height: 16px;
   }
 
   .card,
