@@ -9,8 +9,25 @@ class Auth {
       savedUser: localStorage.getItem('billing_user'),
       savedPass: localStorage.getItem('billing_pass'),
       savedHash: localStorage.getItem('billing_pass_hash'),
-      savedSalt: localStorage.getItem('billing_pass_salt')
+      savedSalt: localStorage.getItem('billing_pass_salt'),
+      savedRecoveryHash: localStorage.getItem('billing_recovery_hash')
     };
+  }
+
+  generateRecoveryKey() {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let part1 = '';
+    let part2 = '';
+    const bytes = new Uint8Array(8);
+    if (window.crypto?.getRandomValues) {
+      window.crypto.getRandomValues(bytes);
+      for (let i = 0; i < 4; i++) part1 += chars[bytes[i] % chars.length];
+      for (let i = 4; i < 8; i++) part2 += chars[bytes[i] % chars.length];
+    } else {
+      for (let i = 0; i < 4; i++) part1 += chars[Math.floor(Math.random() * chars.length)];
+      for (let i = 4; i < 8; i++) part2 += chars[Math.floor(Math.random() * chars.length)];
+    }
+    return `LNK-${part1}-${part2}`;
   }
 
   createSalt() {
@@ -40,6 +57,14 @@ class Auth {
     localStorage.setItem('billing_pass_hash', hash);
     localStorage.setItem('billing_pass_salt', salt);
     localStorage.removeItem('billing_pass');
+
+    let recoveryKey = null;
+    if (!localStorage.getItem('billing_recovery_hash')) {
+      recoveryKey = this.generateRecoveryKey();
+      const recHash = await this.hashPassword(recoveryKey.toUpperCase().replace(/\s+/g, ''), salt);
+      localStorage.setItem('billing_recovery_hash', recHash);
+    }
+    return recoveryKey;
   }
 
   async verifyCredentials(user, pass, creds) {
@@ -122,9 +147,12 @@ class Auth {
 
       if (!creds.savedUser) {
         // First time setup — no lockout applies
-        await this.saveCredentials(user, pass);
+        const recoveryKey = await this.saveCredentials(user, pass);
         localStorage.removeItem(ATTEMPTS_KEY);
         localStorage.removeItem(LOCKED_UNTIL_KEY);
+        if (recoveryKey) {
+          alert(`Account Setup Complete!\n\nYOUR MASTER RECOVERY KEY:\n${recoveryKey}\n\nPlease write this key down or screenshot it. If you ever forget your password, you can use this key to reset your login.`);
+        }
         this.login();
       } else {
         if (await this.verifyCredentials(user, pass, creds)) {
@@ -156,29 +184,93 @@ class Auth {
     });
 
     document.getElementById('btn-reset-login').addEventListener('click', async () => {
+      if (getLockEnd() > Date.now()) {
+        const remaining = Math.ceil((getLockEnd() - Date.now()) / 1000);
+        loginError.textContent = `Too many failed attempts. Try again in ${remaining}s.`;
+        return;
+      }
+
       const creds = this.getStoredCredentials();
-      if (creds.savedUser) {
-        const user = prompt('Enter current username to reset login:');
-        if (user === null) return;
-        const pass = prompt('Enter current password to reset login:');
-        if (pass === null) return;
-        if (!(await this.verifyCredentials(user.trim(), pass.trim(), creds))) {
-          alert('Incorrect credentials');
-          return;
+      if (!creds.savedUser) {
+        alert('No login credentials have been configured yet. Enter a username and password above to set up.');
+        return;
+      }
+
+      const recordFailure = () => {
+        const attempts = getAttempts() + 1;
+        localStorage.setItem(ATTEMPTS_KEY, String(attempts));
+        const remaining = LOCK_AFTER - attempts;
+        if (attempts >= LOCK_AFTER) {
+          localStorage.setItem(LOCKED_UNTIL_KEY, String(Date.now() + LOCK_SECONDS * 1000));
+          startLockCountdown();
+        } else {
+          loginError.textContent = `Incorrect reset authorization. ${remaining} attempt${remaining === 1 ? '' : 's'} remaining.`;
+        }
+      };
+
+      const promptMsg = creds.savedRecoveryHash
+        ? 'Forgot Password / Reset Login:\n\nEnter your Master Recovery Key (e.g. LNK-XXXX-XXXX), Server Secret, or current password:'
+        : 'Forgot Password / Reset Login:\n\nEnter Server Secret, current password, or type RESET to confirm credential reset:';
+
+      const inputKey = prompt(promptMsg);
+      if (inputKey === null) return;
+      const cleanKey = inputKey.trim();
+      if (!cleanKey) return;
+
+      let authorized = false;
+
+      // 1. Verify against Recovery Key (if configured)
+      if (creds.savedRecoveryHash && creds.savedSalt) {
+        const normalizedKey = cleanKey.toUpperCase().replace(/\s+/g, '');
+        const testHash = await this.hashPassword(normalizedKey, creds.savedSalt);
+        if (testHash === creds.savedRecoveryHash) {
+          authorized = true;
         }
       }
 
-      const confirmReset = confirm('Reset login credentials? Bill history will stay safe.');
+      // 2. Verify against Server API Secret
+      const serverSecret = window.LYNKBAY_API_SECRET || '';
+      if (!authorized && serverSecret && cleanKey === serverSecret) {
+        authorized = true;
+      }
+
+      // 3. Verify against current password (if known)
+      if (!authorized) {
+        const isPass = await this.verifyCredentials(creds.savedUser, cleanKey, creds);
+        if (isPass) {
+          authorized = true;
+        }
+      }
+
+      // 4. Fallback for legacy setups where no recovery key exists yet
+      if (!authorized && !creds.savedRecoveryHash) {
+        if (cleanKey.toUpperCase() === 'RESET') {
+          authorized = true;
+        }
+      }
+
+      if (!authorized) {
+        recordFailure();
+        alert('Incorrect recovery key, secret, or password.');
+        return;
+      }
+
+      const confirmReset = confirm('Reset login credentials? Your bills, stock, and customer data will remain completely safe.');
       if (!confirmReset) return;
 
       localStorage.removeItem('billing_user');
       localStorage.removeItem('billing_pass');
       localStorage.removeItem('billing_pass_hash');
       localStorage.removeItem('billing_pass_salt');
+      localStorage.removeItem('billing_recovery_hash');
+      localStorage.removeItem(ATTEMPTS_KEY);
+      localStorage.removeItem(LOCKED_UNTIL_KEY);
+
       document.getElementById('auth-user').value = '';
       document.getElementById('auth-pass').value = '';
       document.getElementById('login-title').innerText = 'Welcome Setup';
-      alert('Login credentials reset. Create a new username and password.');
+      loginError.textContent = '';
+      alert('Login credentials reset. Please enter a new username and password.');
     });
   }
 

@@ -737,11 +737,69 @@ class Database {
 
   async syncCustomersFromBills() {
     const bills = await this.getBills();
-    for (const bill of bills) {
-      const name = (bill.customerName || '').trim();
-      if (!name || name.toLowerCase() === 'walk-in customer') continue;
-      await this.upsertCustomerByName(name, bill.customerPhone || '', bill.customerAddress || '');
+    if (!bills || bills.length === 0) {
+      localStorage.setItem('customers_synced_v1', '1');
+      return;
     }
+
+    return new Promise((resolve, reject) => {
+      const tx = this.db.transaction('customers', 'readwrite');
+      const store = tx.objectStore('customers');
+      const req = store.getAll();
+
+      req.onsuccess = () => {
+        const existingCustomers = req.result || [];
+        const customerMap = new Map();
+        for (const c of existingCustomers) {
+          const key = this.normalizeText(c.name);
+          if (key) customerMap.set(key, c);
+        }
+
+        const now = Date.now();
+        for (const bill of bills) {
+          const rawName = (bill.customerName || '').trim();
+          if (!rawName || rawName.toLowerCase() === 'walk-in customer') continue;
+          const key = this.normalizeText(rawName);
+          if (!key) continue;
+
+          const phone = (bill.customerPhone || '').trim();
+          const address = (bill.customerAddress || '').trim();
+
+          if (customerMap.has(key)) {
+            const existing = customerMap.get(key);
+            let changed = false;
+            if (phone && !(existing.phone || '').trim()) {
+              existing.phone = phone;
+              changed = true;
+            }
+            if (address && !(existing.address || '').trim()) {
+              existing.address = address;
+              changed = true;
+            }
+            if (changed) {
+              existing.updated_at = now;
+              store.put(existing);
+            }
+          } else {
+            const newCustomer = {
+              name: rawName,
+              phone,
+              address,
+              created_at: now,
+              updated_at: now
+            };
+            customerMap.set(key, newCustomer);
+            store.add(newCustomer);
+          }
+        }
+      };
+
+      tx.oncomplete = () => {
+        localStorage.setItem('customers_synced_v1', '1');
+        resolve();
+      };
+      tx.onerror = () => reject(tx.error);
+    });
   }
 
   async saveBill() {
@@ -1221,6 +1279,11 @@ class Database {
     }
 
     await this.recalculateBillCounter();
+    if (customers.length === 0 && bills.length > 0) {
+      await this.syncCustomersFromBills();
+    } else {
+      localStorage.setItem('customers_synced_v1', '1');
+    }
   }
 }
 
@@ -1307,10 +1370,16 @@ class SyncCapableDatabase extends Database {
   }
 
   async callRemote(method, args) {
+    const headers = { 'Content-Type': 'application/json' };
+    const apiSecret = String(window.LYNKBAY_API_SECRET || '').trim();
+    if (apiSecret) {
+      headers['X-LynkBay-Secret'] = apiSecret;
+    }
+
     const response = await fetch(this.apiUrl('/api/db/call'), {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ method, args })
+      headers,
+      body: JSON.stringify({ method, args, authSecret: apiSecret })
     });
     const payload = await response.json().catch(() => ({}));
     if (!response.ok || !payload.ok) {

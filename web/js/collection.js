@@ -162,7 +162,7 @@ class CollectionPage {
           <div style="font-weight:600;">${this.escapeHtml(bill.customerName || 'Walk-in Customer')}</div>
           <div class="collection-badge">Due LKR ${balance.toLocaleString()}</div>
         </div>
-        <div class="history-date" style="margin-bottom:12px;">${this.escapeHtml(dateStr)} | Bill #${this.escapeHtml(bill.id)}</div>
+        <div class="history-date" style="margin-bottom:12px;">${this.escapeHtml(dateStr)} | Bill #${this.escapeHtml(bill.billNumber || bill.id || '')}</div>
         <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:8px; margin-bottom:12px;">
           <div><div class="history-date">Total</div><div style="font-weight:600;">${total.toLocaleString()}</div></div>
           <div><div class="history-date">Received</div><div style="font-weight:600;">${received.toLocaleString()}</div></div>

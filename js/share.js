@@ -52,7 +52,7 @@ class ShareManager {
   }
 
   getReceiptStoreKey() {
-    return `receipt-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    return `receipt-data-${Date.now()}-${Math.random().toString(36).slice(2)}`;
   }
 
   getReceiptNavKey() {
@@ -518,10 +518,21 @@ class ShareManager {
       return;
     }
 
-    // Purge all previous receipt keys to prevent localStorage from filling up.
+    // Purge expired receipt keys older than 15 minutes, preserving navigation intent and active sessions
+    const now = Date.now();
+    const navKey = this.getReceiptNavKey();
     Object.keys(localStorage)
-      .filter((k) => k.startsWith('receipt-'))
-      .forEach((k) => localStorage.removeItem(k));
+      .filter((k) => (k.startsWith('receipt-data-') || k.startsWith('receipt-')) && k !== navKey)
+      .forEach((k) => {
+        try {
+          const item = JSON.parse(localStorage.getItem(k) || '{}');
+          if (!item.createdAt || (now - Number(item.createdAt) > 15 * 60 * 1000)) {
+            localStorage.removeItem(k);
+          }
+        } catch (e) {
+          localStorage.removeItem(k);
+        }
+      });
 
     const receiptKey = this.getReceiptStoreKey();
     try {

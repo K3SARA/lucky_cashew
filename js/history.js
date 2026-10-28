@@ -132,7 +132,7 @@ class HistoryView {
       return;
     }
 
-    const amountText = prompt(`Collect amount for bill #${bill.id} (max LKR ${balance.toLocaleString()}):`, String(balance));
+    const amountText = prompt(`Collect amount for bill #${bill.billNumber || bill.id} (max LKR ${balance.toLocaleString()}):`, String(balance));
     if (amountText === null) return;
     const amount = Money.clampZero(amountText);
     if (!Money.isPositive(amount)) {
@@ -239,7 +239,7 @@ class HistoryView {
     }
 
     const verb = action === 'return' ? 'return' : 'cancel';
-    const confirmed = confirm(`Are you sure you want to ${verb} bill #${bill.id}? Stock will be adjusted automatically.`);
+    const confirmed = confirm(`Are you sure you want to ${verb} bill #${bill.billNumber || bill.id}? Stock will be adjusted automatically.`);
     if (!confirmed) return;
 
     const received = Money.round(bill.receivedAmount || 0);
@@ -296,32 +296,40 @@ class HistoryView {
     if (this._processing) return;
     this._processing = true;
     try {
-    const bill = await window.db.getBillById(Number(billId));
-    if (!bill) return;
+      const bill = await window.db.getBillById(Number(billId));
+      if (!bill) return;
 
-    const confirmed = confirm(`Delete bill #${bill.id}? This permanently removes the bill and its collection records.`);
-    if (!confirmed) return;
+      const billDisplayNumber = bill.billNumber || bill.id;
+      const confirmed = confirm(`Delete bill #${billDisplayNumber}? This permanently removes the bill and its collection records.`);
+      if (!confirmed) return;
 
-    const shouldReturnStock = confirm('Return stock to inventory?');
-    if (shouldReturnStock === null) return; // User cancelled
+      let returnStock = false;
+      if (Array.isArray(bill.items) && bill.items.length > 0) {
+        returnStock = confirm('Return stock to inventory? Click OK to return items to stock, or Cancel to keep stock unchanged.');
+      }
 
-    // Write the audit log BEFORE deleting so the action is always recorded
-    // even if the app closes immediately after the delete completes.
-    await window.db.addAuditLog({
-      action: 'bill_delete',
-      entity: 'bill',
-      entityId: bill.id,
-      details: { customerName: bill.customerName || '', total: bill.total || 0, returnStock: shouldReturnStock }
-    });
+      // Write the audit log BEFORE deleting so the action is always recorded
+      // even if the app closes immediately after the delete completes.
+      await window.db.addAuditLog({
+        action: 'bill_delete',
+        entity: 'bill',
+        entityId: bill.id,
+        details: {
+          billNumber: billDisplayNumber,
+          customerName: bill.customerName || '',
+          total: bill.total || 0,
+          returnStock: Boolean(returnStock)
+        }
+      });
 
-    const deleted = await window.db.deleteBillAndReturnStock({
-      billId: bill.id,
-      returnStock: Boolean(shouldReturnStock)
-    });
-    if (!deleted) {
-      alert('Failed to delete bill.');
-      return;
-    }
+      const deleted = await window.db.deleteBillAndReturnStock({
+        billId: bill.id,
+        returnStock: Boolean(returnStock)
+      });
+      if (!deleted) {
+        alert('Failed to delete bill.');
+        return;
+      }
 
     if (window.share.currentBill && Number(window.share.currentBill.id) === Number(bill.id)) {
       window.share.currentBill = null;
@@ -381,7 +389,7 @@ class HistoryView {
             <div class="history-customer">${this.escapeHtml(bill.customerName || 'Walk-in Customer')}</div>
             <span class="history-sale-badge ${statusClass}">${statusLabel}</span>
           </div>
-          <div class="history-sale-id">#${this.escapeHtml(bill.id || '')}</div>
+          <div class="history-sale-id">#${this.escapeHtml(bill.billNumber || bill.id || '')}</div>
         </div>
         <div class="history-sale-date">${dateStr}</div>
         <div class="history-sale-content">

@@ -2,6 +2,7 @@ const fs = require('fs');
 const http = require('http');
 const path = require('path');
 const vm = require('vm');
+const crypto = require('crypto');
 const fakeIndexedDb = require('fake-indexeddb');
 
 const HOST = process.env.LYNKBAY_HOST || '0.0.0.0';
@@ -10,11 +11,36 @@ const ROOT_DIR = __dirname;
 const DATA_DIR = path.join(ROOT_DIR, 'data');
 const DEFAULT_DATA_DIR = process.env.RAILWAY_VOLUME_MOUNT_PATH || DATA_DIR;
 const DATA_FILE = process.env.LYNKBAY_DATA_FILE || path.join(DEFAULT_DATA_DIR, 'lynkbay-db.json');
+const SECRET_FILE = path.join(DEFAULT_DATA_DIR, 'lynkbay-api-secret.txt');
 const DB_SCRIPT = path.join(ROOT_DIR, 'js', 'db.js');
 const ALLOWED_ORIGINS = String(process.env.LYNKBAY_ALLOWED_ORIGINS || '')
   .split(',')
   .map((origin) => origin.trim())
   .filter(Boolean);
+
+function resolveApiSecret() {
+  if (process.env.LYNKBAY_API_SECRET && process.env.LYNKBAY_API_SECRET.trim()) {
+    return process.env.LYNKBAY_API_SECRET.trim();
+  }
+  if (process.env.API_SECRET && process.env.API_SECRET.trim()) {
+    return process.env.API_SECRET.trim();
+  }
+  try {
+    if (fs.existsSync(SECRET_FILE)) {
+      const stored = fs.readFileSync(SECRET_FILE, 'utf8').trim();
+      if (stored) return stored;
+    }
+  } catch (err) {}
+
+  const generated = crypto.randomBytes(24).toString('hex');
+  try {
+    fs.mkdirSync(DEFAULT_DATA_DIR, { recursive: true });
+    fs.writeFileSync(SECRET_FILE, generated, 'utf8');
+  } catch (err) {}
+  return generated;
+}
+
+const API_SECRET = resolveApiSecret();
 
 const ALLOWED_METHODS = new Set([
   'addProduct',
@@ -151,7 +177,7 @@ function corsHeaders(req) {
   return {
     'Access-Control-Allow-Origin': origin,
     'Access-Control-Allow-Methods': 'GET,POST,OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Headers': 'Content-Type, X-LynkBay-Secret, X-API-Key, Authorization',
     'Vary': 'Origin'
   };
 }
@@ -177,9 +203,30 @@ function readJsonBody(req) {
   });
 }
 
+function getProvidedAuthSecret(req, payload) {
+  const headerKey = req.headers['x-lynkbay-secret'] || req.headers['x-api-key'];
+  if (headerKey) return String(headerKey).trim();
+
+  const authHeader = req.headers['authorization'];
+  if (authHeader && authHeader.toLowerCase().startsWith('bearer ')) {
+    return authHeader.slice(7).trim();
+  }
+
+  if (payload && payload.authSecret) {
+    return String(payload.authSecret).trim();
+  }
+
+  return '';
+}
+
 async function handleApi(req, res) {
   if (req.method === 'OPTIONS') {
-    res.writeHead(204, corsHeaders(req));
+    res.writeHead(204, {
+      ...corsHeaders(req),
+      'Access-Control-Allow-Origin': req.headers.origin || '*',
+      'Access-Control-Allow-Methods': 'GET,POST,OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, X-LynkBay-Secret, X-API-Key, Authorization'
+    });
     res.end();
     return;
   }
@@ -196,6 +243,13 @@ async function handleApi(req, res) {
 
   try {
     const payload = await readJsonBody(req);
+    const providedSecret = getProvidedAuthSecret(req, payload);
+
+    if (!API_SECRET || providedSecret !== API_SECRET) {
+      sendJson(req, res, 401, { ok: false, error: 'Unauthorized: Invalid or missing API secret.' });
+      return;
+    }
+
     const method = String(payload.method || '');
     const args = Array.isArray(payload.args) ? payload.args : [];
 
@@ -222,6 +276,15 @@ function serveStatic(req, res) {
   const requestUrl = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
   let pathname = decodeURIComponent(requestUrl.pathname);
   if (pathname === '/') pathname = '/index.html';
+
+  if (pathname === '/js/deploy-config.js') {
+    res.writeHead(200, {
+      'Content-Type': 'text/javascript; charset=utf-8',
+      'Cache-Control': 'no-store'
+    });
+    res.end(`window.LYNKBAY_API_BASE_URL = window.LYNKBAY_API_BASE_URL || '';\nwindow.LYNKBAY_API_SECRET = ${JSON.stringify(API_SECRET)};\n`);
+    return;
+  }
 
   const filePath = path.normalize(path.join(ROOT_DIR, pathname));
   if (!filePath.startsWith(ROOT_DIR)) {

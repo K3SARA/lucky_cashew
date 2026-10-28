@@ -310,10 +310,10 @@
   min-height: 150px;
   margin: 0 0 5px;
   padding: 22px 20px 16px;
-  background: #fff;
-  border: 1px solid #e6ebf4;
-  border-radius: 0;
-  box-shadow: none;
+  background: var(--card-bg);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-subtle);
 }
 .history-sale-top {
   display: flex;
@@ -565,27 +565,196 @@
   font-weight: 800;
   box-shadow: 0 12px 28px rgba(0,0,0,0.22);
 }
-.inventory-product-header {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 8px;
-  align-items: center;
+.inventory-item-card {
+  padding: 16px;
+  margin-bottom: 12px;
+  background: var(--card-bg);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-subtle);
+  transition: box-shadow var(--transition-fast);
 }
+
+.inventory-card-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.inventory-name-wrap {
+  flex: 1;
+  min-width: 0;
+}
+
 .inventory-name-input {
   font-size: 1.05rem;
   font-weight: 600;
+  width: 100%;
 }
-.inventory-delete-btn {
-  border: 1px solid rgba(176,0,32,0.18);
-  border-radius: var(--radius-md);
-  background: rgba(176,0,32,0.08);
+
+.inventory-name-input:disabled {
+  background: transparent !important;
+  border-color: transparent !important;
+  padding-left: 0;
+  color: var(--text-main) !important;
+  opacity: 1 !important;
+  cursor: default;
+  box-shadow: none !important;
+}
+
+.inventory-summary-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.inventory-stock-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.inventory-stock-badge.badge-ok {
+  background: rgba(31, 122, 77, 0.12);
+  color: #1f7a4d;
+}
+
+.inventory-stock-badge.badge-low {
+  background: rgba(220, 140, 0, 0.14);
+  color: #b57400;
+}
+
+.inventory-stock-badge.badge-out {
+  background: rgba(176, 0, 32, 0.12);
   color: #b00020;
-  padding: 10px 12px;
+}
+
+/* Hamburger toggle button */
+.inventory-hamburger-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  background: var(--bg-color);
+  color: var(--text-main);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  padding: 0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.inventory-hamburger-btn:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.inventory-hamburger-btn:active {
+  transform: scale(0.92);
+}
+
+.inventory-hamburger-btn .hamburger-bar {
+  display: block;
+  width: 17px;
+  height: 2px;
+  background-color: currentColor;
+  border-radius: 1px;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.inventory-hamburger-btn.active {
+  background: var(--text-main);
+  border-color: var(--text-main);
+  color: var(--bg-color);
+}
+
+.inventory-hamburger-btn.active .hamburger-bar:nth-child(1) {
+  transform: translateY(6px) rotate(45deg);
+}
+
+.inventory-hamburger-btn.active .hamburger-bar:nth-child(2) {
+  opacity: 0;
+}
+
+.inventory-hamburger-btn.active .hamburger-bar:nth-child(3) {
+  transform: translateY(-6px) rotate(-45deg);
+}
+
+/* Collapsible Details Panel */
+.inventory-item-details {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px dashed rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  animation: fadeIn 0.2s ease;
+}
+
+.inventory-item-details.hidden {
+  display: none !important;
+}
+
+.inventory-details-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.inventory-details-grid label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  margin-bottom: 4px;
+  display: block;
+}
+
+.inventory-details-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding-top: 4px;
+}
+
+.inventory-history-btn {
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: var(--radius-md);
+  background: var(--bg-color);
+  color: var(--text-main);
+  padding: 9px 14px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.inventory-history-btn:hover {
+  opacity: 0.85;
+}
+
+.inventory-delete-btn {
+  border: 1px solid rgba(176, 0, 32, 0.18);
+  border-radius: var(--radius-md);
+  background: rgba(176, 0, 32, 0.08);
+  color: #b00020;
+  padding: 9px 14px;
   font-size: 0.82rem;
   font-weight: 800;
+  cursor: pointer;
+  transition: opacity 0.15s;
 }
+
 .inventory-delete-btn:disabled {
-  opacity: 0.45;
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 .customers-table-wrap {
   padding: 0;
@@ -709,7 +878,7 @@
   padding: 12px;
   border: 1px solid rgba(0,0,0,0.08);
   border-radius: var(--radius-md);
-  background: #fff;
+  background: var(--card-bg);
 }
 .customer-location-panel strong {
   display: block;
@@ -800,7 +969,7 @@
   overflow-y: auto;
   border: 1px solid rgba(0,0,0,0.08);
   border-radius: var(--radius-md);
-  background: #fff;
+  background: var(--card-bg);
 }
 .customer-map-search-results.active {
   display: block;
@@ -957,7 +1126,7 @@
 .expense-card {
   margin: 0 20px 10px;
   padding: 14px;
-  background: #fff;
+  background: var(--card-bg);
   border: 1px solid rgba(0,0,0,0.08);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-card);
@@ -1471,9 +1640,9 @@
     max-width: 1120px;
     margin: 18px auto;
     padding: 18px 22px;
-    border: 1px solid rgba(0,0,0,0.05);
+    border: 1px solid rgba(0,0,0,0.07);
     border-radius: var(--radius-md);
-    background: #fff;
+    background: var(--card-bg);
   }
 
   .summary-row.total {
@@ -1671,8 +1840,8 @@
 @media (min-width: 900px) {
   :root {
     --desktop-bg: #f7f8f5;
-    --desktop-surface: #ffffff;
-    --desktop-surface-soft: #f3f5f1;
+    --desktop-surface: var(--card-bg);
+    --desktop-surface-soft: rgba(0, 0, 0, 0.05);
     --desktop-border: rgba(17, 24, 20, 0.1);
     --desktop-border-strong: rgba(17, 24, 20, 0.16);
     --desktop-text: #121511;
@@ -1784,7 +1953,7 @@
   .expense-card {
     border: 1px solid var(--desktop-border);
     border-radius: 12px;
-    background: rgba(255, 255, 255, 0.9);
+    background: var(--card-bg);
     box-shadow: var(--desktop-shadow-soft);
   }
 
@@ -2026,7 +2195,7 @@
   .history-sale-card {
     border: 1px solid var(--desktop-border);
     border-radius: 12px;
-    background: linear-gradient(135deg, #ffffff 0%, #f8faf7 100%);
+    background: var(--card-bg);
     box-shadow: var(--desktop-shadow-soft);
   }
 
@@ -2070,7 +2239,7 @@
   .report-table-wrap {
     border: 1px solid var(--desktop-border);
     border-radius: 12px;
-    background: #fff;
+    background: var(--card-bg);
     box-shadow: var(--desktop-shadow-soft);
   }
 
@@ -2143,7 +2312,7 @@
 
   #inventory-list .card,
   #inventory-archived-list .card {
-    background: #fff;
+    background: var(--card-bg);
   }
 
   .inventory-product-header {
@@ -2206,14 +2375,14 @@
 
   .report-metric {
     border-color: var(--desktop-border);
-    background: #f8faf7;
+    background: var(--card-bg);
     padding: 14px;
   }
 
   .modal-content,
   .customer-map-modal-content {
-    border: 1px solid rgba(255, 255, 255, 0.7);
-    background: #fff;
+    border: 1px solid var(--desktop-border);
+    background: var(--card-bg);
     box-shadow: 0 28px 80px rgba(17, 24, 20, 0.26);
   }
 
@@ -2253,6 +2422,7 @@
   html[data-theme="dark"] .card,
   html[data-theme="dark"] .summary-card,
   html[data-theme="dark"] .history-filters,
+  html[data-theme="dark"] .history-sale-card,
   html[data-theme="dark"] .reports-controls,
   html[data-theme="dark"] .reports-view,
   html[data-theme="dark"] .expense-card,
@@ -2322,6 +2492,37 @@
 
   html[data-theme="dark"] .inventory-name-input {
     background: transparent;
+  }
+
+  html[data-theme="dark"] .inventory-hamburger-btn {
+    border-color: rgba(255, 255, 255, 0.15);
+    background: #111713;
+    color: var(--desktop-text);
+  }
+
+  html[data-theme="dark"] .inventory-hamburger-btn.active {
+    background: #207f4e;
+    border-color: #207f4e;
+    color: #fff;
+  }
+
+  html[data-theme="dark"] .inventory-item-details {
+    border-top-color: rgba(255, 255, 255, 0.1);
+  }
+
+  html[data-theme="dark"] .inventory-stock-badge.badge-ok {
+    background: rgba(31, 122, 77, 0.25);
+    color: #4ade80;
+  }
+
+  html[data-theme="dark"] .inventory-stock-badge.badge-low {
+    background: rgba(220, 140, 0, 0.25);
+    color: #facc15;
+  }
+
+  html[data-theme="dark"] .inventory-stock-badge.badge-out {
+    background: rgba(220, 38, 38, 0.25);
+    color: #f87171;
   }
 }
 

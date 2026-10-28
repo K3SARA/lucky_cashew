@@ -22,9 +22,10 @@ for (const name of include) {
 }
 
 const apiBaseUrl = String(process.env.LYNKBAY_API_BASE_URL || '').replace(/\/+$/, '');
+const apiSecret = String(process.env.LYNKBAY_API_SECRET || '');
 fs.writeFileSync(
   path.join(webDir, 'js', 'deploy-config.js'),
-  `window.LYNKBAY_API_BASE_URL = ${JSON.stringify(apiBaseUrl)};\n`
+  `window.LYNKBAY_API_BASE_URL = ${JSON.stringify(apiBaseUrl)};\nwindow.LYNKBAY_API_SECRET = ${JSON.stringify(apiSecret)};\n`
 );
 
 function copyDir(src, dest) {

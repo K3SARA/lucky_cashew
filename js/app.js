@@ -9,7 +9,9 @@ class App {
   async init() {
     try {
       await window.db.init();
-      await window.db.syncCustomersFromBills();
+      if (!localStorage.getItem('customers_synced_v1')) {
+        await window.db.syncCustomersFromBills();
+      }
       // Ensure default product exists
       const prods = await window.db.getProducts();
       if (prods.length === 0) {

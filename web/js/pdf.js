@@ -6,10 +6,37 @@
   const BOTTOM_MARGIN = 42;
 
   function normalizeText(value) {
-    return String(value == null ? '' : value)
-      .replace(/\s+/g, ' ')
-      .replace(/[^\x20-\x7E]/g, ' ')
-      .trim();
+    if (value == null) return '';
+    let text = String(value);
+
+    // Convert local currency symbols to standard labels
+    text = text
+      .replace(/\u0DBB\u0DD4/g, 'Rs. ')
+      .replace(/\u0BDE/g, 'Rs. ')
+      .replace(/₹/g, 'Rs. ')
+      .replace(/€/g, 'EUR ')
+      .replace(/£/g, 'GBP ')
+      .replace(/¥/g, 'JPY ');
+
+    // Map typographic symbols and punctuation to ASCII equivalents
+    text = text
+      .replace(/[\u2018\u2019\u201A\u201B]/g, "'")
+      .replace(/[\u201C\u201D\u201E\u201F]/g, '"')
+      .replace(/[\u2013\u2014\u2015]/g, '-')
+      .replace(/\u2026/g, '...')
+      .replace(/[\u2022\u25CF\u25CB]/g, '*')
+      .replace(/\u2116/g, 'No.')
+      .replace(/[\u00A0\u2000-\u200B\u202F\u205F\u3000]/g, ' ');
+
+    // Decompose diacritics (e.g., é -> e, ü -> u, ñ -> n)
+    if (typeof text.normalize === 'function') {
+      text = text.normalize('NFKD').replace(/[\u0300-\u036F]/g, '');
+    }
+
+    // Sanitize any remaining non-ASCII without inserting destructive spaces into words
+    text = text.replace(/[^\x20-\x7E]/g, '');
+
+    return text.replace(/\s+/g, ' ').trim();
   }
 
   function escapePdfText(value) {
@@ -27,7 +54,7 @@
   }
 
   function escapeHtml(value) {
-    return normalizeText(value)
+    return String(value == null ? '' : value)
       .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;')

@@ -5,6 +5,27 @@ class Inventory {
     this.products = [];
     this.archivedProducts = [];
     this.inventoryLogs = [];
+    this.expandedProductIds = new Set();
+  }
+
+  toggleDetails(productId) {
+    const id = Number(productId);
+    if (this.expandedProductIds.has(id)) {
+      this.expandedProductIds.delete(id);
+    } else {
+      this.expandedProductIds.add(id);
+    }
+    const detailsEl = document.getElementById(`inv-details-${id}`);
+    const toggleBtn = document.getElementById(`inv-toggle-${id}`);
+    const isExpanded = this.expandedProductIds.has(id);
+    if (detailsEl) {
+      detailsEl.classList.toggle('hidden', !isExpanded);
+    }
+    if (toggleBtn) {
+      toggleBtn.classList.toggle('active', isExpanded);
+      toggleBtn.setAttribute('aria-expanded', String(isExpanded));
+      toggleBtn.setAttribute('title', isExpanded ? 'Hide details' : 'Show details');
+    }
   }
 
   async init() {
@@ -562,42 +583,60 @@ class Inventory {
     list.innerHTML = '';
     this.products.forEach((p) => {
       const el = document.createElement('div');
-      el.className = 'card bill-item';
+      el.className = 'card bill-item inventory-item-card';
 
       const currentStock = Number(p.stock) || 0;
       const billingPrice = Number(p.billingPrice) || 0;
       const invoicePrice = Number(p.invoicePrice) || 0;
       const reorderLevel = Number(p.reorderLevel) || 5;
       const disabled = this.isEditing ? '' : ' disabled';
+      const isExpanded = this.expandedProductIds.has(Number(p.id));
+
+      let stockBadgeHtml = '';
+      if (currentStock <= 0) {
+        stockBadgeHtml = '<span class="inventory-stock-badge badge-out">Out of Stock</span>';
+      } else if (currentStock <= reorderLevel) {
+        stockBadgeHtml = `<span class="inventory-stock-badge badge-low">${currentStock} in stock</span>`;
+      } else {
+        stockBadgeHtml = `<span class="inventory-stock-badge badge-ok">${currentStock} in stock</span>`;
+      }
 
       el.innerHTML = `
-        <div class="item-header inventory-product-header">
-          <input type="text" id="inv-name-${p.id}" data-inventory-field class="input-field inventory-name-input" value="${this.escapeHtml(p.name)}"${disabled}>
-          <button class="inventory-history-btn" onclick="inventory.showProductHistory(${p.id})">History</button>
-          <button class="inventory-delete-btn" data-inventory-delete onclick="inventory.deleteProduct(${p.id})"${disabled}>Delete</button>
+        <div class="inventory-card-summary">
+          <div class="inventory-name-wrap">
+            <input type="text" id="inv-name-${p.id}" data-inventory-field class="input-field inventory-name-input" value="${this.escapeHtml(p.name)}"${disabled}>
+          </div>
+          <div class="inventory-summary-actions">
+            ${stockBadgeHtml}
+            <button type="button" id="inv-toggle-${p.id}" class="inventory-hamburger-btn${isExpanded ? ' active' : ''}" onclick="inventory.toggleDetails(${p.id})" aria-expanded="${isExpanded}" title="${isExpanded ? 'Hide details' : 'Show details'}" aria-label="Toggle details">
+              <span class="hamburger-bar"></span>
+              <span class="hamburger-bar"></span>
+              <span class="hamburger-bar"></span>
+            </button>
+          </div>
         </div>
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:14px;">
-          <div style="display:flex; flex-direction:column; gap:6px;">
-            <span style="color:var(--text-muted); font-size:0.85rem;">Stock</span>
-            <input type="number" id="inv-stock-${p.id}" data-inventory-field class="input-field" value="${currentStock}" step="0.01" style="text-align:right;"${disabled}>
-          </div>
-          <div style="display:flex; flex-direction:column; gap:6px;">
-            <span style="color:var(--text-muted); font-size:0.85rem;">Selling Price</span>
-            <input type="number" id="inv-billing-price-${p.id}" data-inventory-field class="input-field" value="${billingPrice}" step="0.01" style="text-align:right;"${disabled}>
-          </div>
-          <div style="display:flex; flex-direction:column; gap:6px;">
-            <span style="color:var(--text-muted); font-size:0.85rem;">Purchase Price</span>
-            <input type="number" id="inv-invoice-price-${p.id}" data-inventory-field class="input-field" value="${invoicePrice}" step="0.01" style="text-align:right;"${disabled}>
-          </div>
-          <div style="display:flex; flex-direction:column; gap:6px;">
-            <span style="color:var(--text-muted); font-size:0.85rem;">Reorder Level</span>
-            <input type="number" id="inv-reorder-level-${p.id}" data-inventory-field class="input-field" value="${reorderLevel}" step="0.01" style="text-align:right;"${disabled}>
-          </div>
-          <div style="display:flex; align-items:flex-end; justify-content:flex-end;">
-            <div>
-              ${currentStock <= 0 ? '<span style="color:var(--danger-color); font-size:0.8rem; font-weight:600;">Out of Stock</span>' : ''}
-              ${currentStock > 0 && currentStock <= reorderLevel ? '<span style="color:orange; font-size:0.8rem; font-weight:600;">Low Stock</span>' : ''}
+        <div id="inv-details-${p.id}" class="inventory-item-details${isExpanded ? '' : ' hidden'}">
+          <div class="inventory-details-grid">
+            <div class="input-group" style="margin-bottom:0;">
+              <label>Stock (Qty)</label>
+              <input type="number" id="inv-stock-${p.id}" data-inventory-field class="input-field" value="${currentStock}" step="0.01" style="text-align:right;"${disabled}>
             </div>
+            <div class="input-group" style="margin-bottom:0;">
+              <label>Selling Price (LKR)</label>
+              <input type="number" id="inv-billing-price-${p.id}" data-inventory-field class="input-field" value="${billingPrice}" step="0.01" style="text-align:right;"${disabled}>
+            </div>
+            <div class="input-group" style="margin-bottom:0;">
+              <label>Purchase Price (LKR)</label>
+              <input type="number" id="inv-invoice-price-${p.id}" data-inventory-field class="input-field" value="${invoicePrice}" step="0.01" style="text-align:right;"${disabled}>
+            </div>
+            <div class="input-group" style="margin-bottom:0;">
+              <label>Reorder Level</label>
+              <input type="number" id="inv-reorder-level-${p.id}" data-inventory-field class="input-field" value="${reorderLevel}" step="0.01" style="text-align:right;"${disabled}>
+            </div>
+          </div>
+          <div class="inventory-details-actions">
+            <button type="button" class="inventory-history-btn" onclick="inventory.showProductHistory(${p.id})">History</button>
+            <button type="button" class="inventory-delete-btn" data-inventory-delete onclick="inventory.deleteProduct(${p.id})"${disabled}>Delete</button>
           </div>
         </div>
       `;

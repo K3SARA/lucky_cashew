@@ -31,7 +31,8 @@ const ASSETS = [
   './js/share.js?v=115',
   './js/receipt-print.js?v=115',
   './js/clear-inputs.js?v=115',
-  './icons/logo-print.png'
+  './icons/logo-print.png',
+  './icons/logo.png'
 ];
 
 self.addEventListener('install', (e) => {
@@ -106,12 +107,19 @@ self.addEventListener('fetch', (e) => {
 
           if (cached) return cached;
 
-          return fetchPromise.then((res) => {
-            if (res) return res;
-            if (e.request.destination === 'document') {
-              return cache.match('./index.html') || new Response('Offline', { status: 504 });
+          return cache.match(e.request, { ignoreSearch: true }).then((cachedIgnoreSearch) => {
+            if (cachedIgnoreSearch) {
+              fetchPromise;
+              return cachedIgnoreSearch;
             }
-            return new Response('', { status: 504, statusText: 'Offline' });
+
+            return fetchPromise.then((res) => {
+              if (res) return res;
+              if (e.request.destination === 'document') {
+                return cache.match('./index.html') || new Response('Offline', { status: 504 });
+              }
+              return new Response('', { status: 504, statusText: 'Offline' });
+            });
           });
         });
       })

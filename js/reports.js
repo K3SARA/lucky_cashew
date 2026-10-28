@@ -722,7 +722,7 @@ class ReportsView {
     };
 
     rangeBills.forEach((bill) => {
-      const idLabel = `Bill #${bill.id}`;
+      const idLabel = `Bill #${bill.billNumber || bill.id}`;
       const t = this.getBillTotals(bill);
       const items = Array.isArray(bill.items) ? bill.items : [];
       const lineTotal = items.reduce((sum, item) => {
